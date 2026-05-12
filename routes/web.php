@@ -3,63 +3,107 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
+// TODO Backend: Halaman welcome (landing page) — ganti dengan controller jika perlu
 Route::get('/', function () {
     return view('welcome');
 });
 
+// TODO Backend: Ganti closure ini dengan DashboardController
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
+    // Profile — sudah pakai controller, aman
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    // Master Data: owner, manager, supervisor
+    // ============================================================
+    // MASTER DATA (Akses: Owner, Manajer, Supervisor)
+    // TODO Backend: Buat CategoryController, ProductController, SupplierController
+    // TODO Backend: Tambahkan route POST/PUT/DELETE di bawah masing-masing grup
+    // TODO Backend: Buat model Category, Product, Supplier + migrasi
+    // ============================================================
     Route::middleware('role:owner,manager,supervisor')->prefix('master')->name('master.')->group(function () {
+        // Categories
         Route::get('/categories', fn () => view('master.categories.index'))->name('categories.index');
         Route::get('/categories/create', fn () => view('master.categories.form'))->name('categories.create');
         Route::get('/categories/{category}/edit', fn () => view('master.categories.form'))->name('categories.edit');
+        // TODO Backend: Route::post('/categories', [CategoryController::class, 'store'])->name('categories.store');
+        // TODO Backend: Route::put('/categories/{category}', [CategoryController::class, 'update'])->name('categories.update');
+        // TODO Backend: Route::delete('/categories/{category}', [CategoryController::class, 'destroy'])->name('categories.destroy');
 
+        // Products
         Route::get('/products', fn () => view('master.products.index'))->name('products.index');
         Route::get('/products/create', fn () => view('master.products.form'))->name('products.create');
         Route::get('/products/{product}/edit', fn () => view('master.products.form'))->name('products.edit');
+        // TODO Backend: Route::post('/products', [ProductController::class, 'store'])->name('products.store');
+        // TODO Backend: Route::put('/products/{product}', [ProductController::class, 'update'])->name('products.update');
+        // TODO Backend: Route::delete('/products/{product}', [ProductController::class, 'destroy'])->name('products.destroy');
 
+        // Suppliers
         Route::get('/suppliers', fn () => view('master.suppliers.index'))->name('suppliers.index');
         Route::get('/suppliers/create', fn () => view('master.suppliers.form'))->name('suppliers.create');
         Route::get('/suppliers/{supplier}/edit', fn () => view('master.suppliers.form'))->name('suppliers.edit');
+        // TODO Backend: Route::post('/suppliers', [SupplierController::class, 'store'])->name('suppliers.store');
+        // TODO Backend: Route::put('/suppliers/{supplier}', [SupplierController::class, 'update'])->name('suppliers.update');
+        // TODO Backend: Route::delete('/suppliers/{supplier}', [SupplierController::class, 'destroy'])->name('suppliers.destroy');
     });
 
-    // Branches: owner, manager
+    // ============================================================
+    // CABANG (Akses: Owner, Manajer)
+    // Model Branch sudah ada + migrasi. TODO Backend: Buat BranchController
+    // ============================================================
     Route::middleware('role:owner,manager')->prefix('branches')->name('branches.')->group(function () {
         Route::get('/', fn () => view('branches.index'))->name('index');
         Route::get('/create', fn () => view('branches.form'))->name('create');
         Route::get('/{branch}', fn () => view('branches.show'))->name('show');
         Route::get('/{branch}/edit', fn () => view('branches.form'))->name('edit');
+        // TODO Backend: Route::post('/', [BranchController::class, 'store'])->name('store');
+        // TODO Backend: Route::put('/{branch}', [BranchController::class, 'update'])->name('update');
+        // TODO Backend: Route::delete('/{branch}', [BranchController::class, 'destroy'])->name('destroy');
     });
 
-    // Users: owner only
+    // ============================================================
+    // PENGGUNA (Akses: Owner only)
+    // Model User sudah ada. TODO Backend: Buat UserController
+    // ============================================================
     Route::middleware('role:owner')->prefix('users')->name('users.')->group(function () {
         Route::get('/', fn () => view('users.index'))->name('index');
         Route::get('/create', fn () => view('users.form'))->name('create');
         Route::get('/{user}/edit', fn () => view('users.form'))->name('edit');
+        // TODO Backend: Route::post('/', [UserController::class, 'store'])->name('store');
+        // TODO Backend: Route::put('/{user}', [UserController::class, 'update'])->name('update');
+        // TODO Backend: Route::delete('/{user}', [UserController::class, 'destroy'])->name('destroy');
     });
 
+    // ============================================================
+    // TRANSAKSI
+    // POS (Akses: Owner, Manajer, Kasir)
+    // Riwayat (Akses: Owner, Manajer, Supervisor)
+    // TODO Backend: Buat TransactionController, model Transaction + migrasi
+    // ============================================================
     Route::prefix('transactions')->name('transactions.')->group(function () {
-        // Transaction history: owner, manager, supervisor
         Route::middleware('role:owner,manager,supervisor')->get('/', fn () => view('transactions.index'))->name('index');
-        // POS: owner, manager, cashier
         Route::middleware('role:owner,manager,cashier')->get('/pos', fn () => view('transactions.pos'))->name('pos');
+        // TODO Backend: Route::post('/pos', [TransactionController::class, 'store'])->name('store');
     });
 
-    // Inventory: owner, manager, warehouse
+    // ============================================================
+    // INVENTARIS (Akses: Owner, Manajer, Pegawai Gudang)
+    // TODO Backend: Buat InventoryController, model Inventory/Stock + migrasi
+    // ============================================================
     Route::middleware('role:owner,manager,warehouse')->prefix('inventory')->name('inventory.')->group(function () {
         Route::get('/', fn () => view('inventory.index'))->name('index');
         Route::get('/stock-opname', fn () => view('inventory.stock-opname'))->name('stock-opname');
+        // TODO Backend: Route::post('/stock-opname', [InventoryController::class, 'stockOpname'])->name('stock-opname.store');
     });
 
-    // Reports: owner, manager, supervisor
+    // ============================================================
+    // LAPORAN (Akses: Owner, Manajer, Supervisor)
+    // TODO Backend: Buat ReportController
+    // ============================================================
     Route::middleware('role:owner,manager,supervisor')->prefix('reports')->name('reports.')->group(function () {
         Route::get('/', fn () => view('reports.index'))->name('index');
         Route::get('/sales', fn () => view('reports.sales'))->name('sales');

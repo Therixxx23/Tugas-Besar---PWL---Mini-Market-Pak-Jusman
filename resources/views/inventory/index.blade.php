@@ -11,26 +11,28 @@
         </div>
     </x-slot>
 
+    {{-- TODO Backend: Ganti angka placeholder dengan data real dari controller --}}
     {{-- Summary Cards --}}
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6">
         <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
             <p class="text-sm text-gray-500">Total Stok</p>
-            <p class="text-2xl font-bold text-gray-900">0</p>
+            <p class="text-2xl font-bold text-gray-900">{{ $totalStok ?? 0 }}</p>
         </div>
         <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
             <p class="text-sm text-gray-500">Stok Menipis</p>
-            <p class="text-2xl font-bold text-amber-600">0</p>
+            <p class="text-2xl font-bold text-amber-600">{{ $stokMenipis ?? 0 }}</p>
         </div>
         <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
             <p class="text-sm text-gray-500">Stok Habis</p>
-            <p class="text-2xl font-bold text-red-600">0</p>
+            <p class="text-2xl font-bold text-red-600">{{ $stokHabis ?? 0 }}</p>
         </div>
         <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-5">
             <p class="text-sm text-gray-500">Nilai Inventaris</p>
-            <p class="text-2xl font-bold text-gray-900">Rp 0</p>
+            <p class="text-2xl font-bold text-gray-900">Rp {{ number_format($nilaiInventaris ?? 0, 0, ',', '.') }}</p>
         </div>
     </div>
 
+    {{-- TODO Backend: Loop $inventoryItems — @forelse($inventoryItems as $item) --}}
     {{-- Inventory Table --}}
     <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
         <div class="p-4 border-b border-gray-100">
@@ -69,8 +71,8 @@
                     </td>
                 </tr>
             </tbody>
-        </table>
 
+        {{-- TODO Backend: Ganti 0 dengan total produk --}}
         <div class="px-6 py-3 border-t border-gray-100 text-sm text-gray-500">
             Total: 0 produk
         </div>

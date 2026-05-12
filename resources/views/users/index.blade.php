@@ -39,15 +39,18 @@
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-100">
+                {{-- TODO Backend: Loop $users — @forelse($users as $user) --}}
                 <tr>
                     <td colspan="6" class="px-6 py-12 text-center text-gray-400">
                         <svg class="w-12 h-12 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"/></svg>
                         <p>Belum ada pengguna</p>
                     </td>
                 </tr>
+                {{-- TODO Backend: @empty — tampilkan baris kosong --}}
+                {{-- @endforelse --}}
             </tbody>
-        </table>
 
+        {{-- TODO Backend: Ganti 0 dengan count($users) --}}
         <div class="px-6 py-3 border-t border-gray-100 text-sm text-gray-500">
             Total: 0 pengguna
         </div>
