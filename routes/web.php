@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 
 // TODO Backend: Halaman welcome (landing page) — ganti dengan controller jika perlu
 Route::get('/', function () {
@@ -19,6 +20,26 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
+    Route::get('/notifications', function () {
+    return view('notifications');
+});
+
+      Route::get('/notifications/read/{id}', function ($id) {
+
+    /** @var \App\Models\User $user */
+    $user = Auth::user();
+
+    if ($user) {
+
+        $notification = $user->notifications()->find($id);
+
+        if ($notification) {
+            $notification->markAsRead();
+        }
+    }
+
+    return redirect('/notifications');
+});
     // ============================================================
     // MASTER DATA (Akses: Owner, Manajer, Supervisor)
     // TODO Backend: Buat CategoryController, ProductController, SupplierController
@@ -109,6 +130,15 @@ Route::middleware('auth')->group(function () {
         Route::get('/sales', fn () => view('reports.sales'))->name('sales');
         Route::get('/stock', fn () => view('reports.stock'))->name('stock');
     });
+
+    // Buat notifikasi sederhana untuk testing
+    Route::get('/notifications', function () {
+    return view('notifications');
+    })->middleware('auth');
+
+    
+
+
 });
 
 require __DIR__.'/auth.php';
